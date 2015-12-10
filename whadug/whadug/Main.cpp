@@ -9,7 +9,6 @@ double bigArea;
 
 void compareAreas(double areaOne, double areaTwo){
 
-	//try{
 		if (areaOne < areaTwo){
 			smallArea = areaOne;
 			bigArea = areaTwo;
@@ -25,15 +24,28 @@ void compareAreas(double areaOne, double areaTwo){
 		}
 }
 
-int main(){
+void showTime(){
 
-	cout << "START" << endl;
+	Mat img = imread("D:/_Daten_Carolin/_HAW/7_IMP/whadug/whadug/Blume.jpg", CV_LOAD_IMAGE_COLOR);
+
+
+
+	//addText(const Mat& img, text, Point org, CvFont font);
+	//putText(Klaus, s1.str(), Point(40, 40), FONT_HERSHEY_PLAIN, 2, Scalar(0, 0, 0), 1, 8, false);
+	namedWindow("Uhrzeit");
+	imshow("Uhrzeit", img);
+
+	
+}
+
+void main(){
 
 	double areaOne = 21; // = contourArea(*shape);
 	double areaTwo = 22; 
 	compareAreas(areaOne, areaTwo);
 
-	system("pause");
-	return 0;
+	//char time = "Uhrzeit";
+	showTime();
 
+	waitKey(0);
 }
