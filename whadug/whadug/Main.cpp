@@ -1,26 +1,118 @@
 #include <iostream>
 #include <opencv2\opencv.hpp>
+#include <math.h> 
 
 #define CAMERA
 
 using namespace std;
 using namespace cv;
 
-const float FAKTOR = 0.5;
+//********************Initialisierung von Methoden***********************
+void runProgramm();
+float calculateRectangleDistanceBetweenTwoPoints(float point1X, float point1Y, float point2X, float point2Y);
+float calculateRectangleCenterX(float point1X, float point1Y, float point2X, float point2Y);
+float calculateRectangleCenterY(float point1X, float point1Y, float point2X, float point2Y);
+float calculateTriangleCenterX(float point1X, float point1Y, float point2X, float point2Y, float point3X, float point3Y);
+float calculateTriangleCenterY(float point1X, float point1Y, float point2X, float point2Y, float point3X, float point3Y);
 
-RNG rng(12345);
 
 int main(){
+
+	char character;
+	float rectangleDistanceBetweenTwoPoints, rectangleCenterX, rectangleCenterY, triangleCenterX, triangleCenterY, x1, y1, x2, y2, x3, y3;
 	
-	Mat img;
-	
+	//***************Calculation points***************
+	//Rectangle: P1(x1, y1) & P2(X2, y2)
+	x1 = 0;
+	y1 = 0;
+	x2 = 1; 
+	y2 = 0;
+
+	//Triangle: P1(x1, y1) & P2(X2, y2) & P3(X3, y3)
+	x3 = 0.5; 
+	y3 = 1;
+
+	//************************************************
+
+	cout << "a: Strecke zwischen zwei Punkten" << endl;
+	cout << "b: Mittelpunkt des Rechtecks" << endl;
+	cout << "c: Mittelpunkt des Dreiecks" << endl;
+	cout << "d: Eigene Punkte angeben fuer Rechteck" << endl;
+	cout << "e: Eigene Punkte angeben fuer Dreieck" << endl;
+	cout << "f: Programm starten" << endl;
+
+	for(;;){
+		cout << "Eingabe des Buchstaben: ";
+		cin >> character;
+
+		switch (character)
+		{
+case 'a': 
+				rectangleDistanceBetweenTwoPoints = calculateRectangleDistanceBetweenTwoPoints(x1,y1,x2,y2);
+				cout << "Strecke zwischen zwei Punkten: " << rectangleDistanceBetweenTwoPoints << endl;
+				break;
+
+			case 'b': 
+				rectangleCenterX = calculateRectangleCenterX(x1,y1,x2,y2);
+				rectangleCenterY = calculateRectangleCenterY(x1,y1,x2,y2);
+				cout << "Mittelpunkt des Rechtecks: " << "M(" << rectangleCenterX << ","<< rectangleCenterY << ")"<< endl;
+				break;
+
+			case 'c': 
+				triangleCenterX = calculateTriangleCenterX(x1,y1,x2,y2,x3,y3);
+				triangleCenterY = calculateTriangleCenterY(x1,y1,x2,y2,x3,y3);
+				cout << "Mittelpunkt des Dreiecks: " << "S(" << triangleCenterX << ","<< triangleCenterY << ")"<< endl;
+				break;
+
+			case 'd': 
+				cout << "X1: ";
+				cin >> x1;
+				cout << "Y1: ";
+				cin >> y1;
+				cout << "X2: ";
+				cin >> x2;
+				cout << "Y2: ";
+				cin >> y2;
+				break;
+
+			case 'e': 
+				cout << "X1: ";
+				cin >> x1;
+				cout << "Y1: ";
+				cin >> y1;
+				cout << "X2: ";
+				cin >> x2;
+				cout << "Y2: ";
+				cin >> y2;
+				cout << "X3: ";
+				cin >> x3;
+				cout << "Y3: ";
+				cin >> y3;
+				break;
+
+			case 'f': 
+				runProgramm();
+			break;
+
+			default: 
+				cout << "Bitte gueltigen Wert eingeben! ";
+				break;
+		}
+	}
+}
+
+void runProgramm(){
+
+const float FAKTOR = 0.5;
+Mat img;
+RNG rng(12345);
+
 #ifdef CAMERA
 	VideoCapture capture(0);
 
 	if(!capture.isOpened()){
 		cout<<"Fehler!"<<endl;
 		system("pause");
-		return 0;
 	}
 
 	int s = 0;
@@ -141,6 +233,47 @@ int main(){
 #endif
 
 	system("pause");
-	return 0;
 
+
+}
+
+//***************FUNCTIONS***************
+float calculateRectangleDistanceBetweenTwoPoints(float point1X, float point1Y, float point2X, float point2Y){
+	//Point 1: (x1,y1) and Point 2: (x2, y2)
+	//d = distance
+	//interimResultX and interimResultY handle the result of x2-x1 and y2-y1
+	float d, interimResultX, interimResultY;
+
+	interimResultX = (point2X-point1X);
+	interimResultY = (point2Y-point1Y);
+
+	interimResultX = pow(interimResultX, 2);	//Exponent function
+	interimResultY = pow(interimResultY, 2);	//Exponent function
+
+	d = sqrt(interimResultX+interimResultY);
+	return d;
+}
+
+float calculateRectangleCenterX(float point1X, float point1Y, float point2X, float point2Y){
+	float mX;
+	mX =  (point1X + point2X) / 2;
+	return mX;
+}
+
+float calculateRectangleCenterY(float point1X, float point1Y, float point2X, float point2Y){
+	float mY;
+	mY =  (point1Y + point2Y) / 2;
+	return mY;
+}
+
+float calculateTriangleCenterX(float point1X, float point1Y, float point2X, float point2Y, float point3X, float point3Y){
+	float mX;
+	mX = (point1X + point2X + point3X) / 3;
+	return mX;
+}
+
+float calculateTriangleCenterY(float point1X, float point1Y, float point2X, float point2Y, float point3X, float point3Y){
+	float mY;
+	mY = (point1Y + point2Y + point3Y) / 3;
+	return mY;
 }
