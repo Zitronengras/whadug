@@ -12,12 +12,12 @@ void compareAreas(float areaOne, float areaTwo){
 		if (areaOne < areaTwo){
 			smallArea = areaOne;
 			bigArea = areaTwo;
-			cout << "Großer Zeiger: " << bigArea << " \n Kleiner Zeiger: " << smallArea << endl;
+			//cout << "Großer Zeiger: " << bigArea << " \n Kleiner Zeiger: " << smallArea << endl;
 		}
 		else if(areaOne > areaTwo){
 			smallArea = areaTwo;
 			bigArea = areaOne;
-			cout << "Grosser Zeiger: " << bigArea << " \n Kleiner Zeiger: " << smallArea << endl;
+			//cout << "Grosser Zeiger: " << bigArea << " \n Kleiner Zeiger: " << smallArea << endl;
 		}
 		else{
 			cout << "Fehler bei Vergleich der Flächeninhalte" << endl;
