@@ -1,6 +1,6 @@
-/whadug/Debug/**
-/whadug/whadug/Debug/**
-/whadug/ipch/**
+whadug/Debug/**
+whadug/whadug/Debug/**
+whadug/ipch/**
 *.tlog
 *.lastbuildstate
 *.idb
