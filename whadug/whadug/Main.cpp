@@ -404,9 +404,9 @@ char filename[20];
 //****************************CODE CARO********************************
 void runCompareArea(){
 
-	float areaOne = 21.5;
-	float areaTwo = 22.0; 
-	compareAreas(areaOne, areaTwo);
+	double areaOne = 21.5;
+	double areaTwo = 22.0; 
+	//compareAreas(areaOne, areaTwo);
 
 	int minutes = 58;
 	int hours = 23;
@@ -416,7 +416,7 @@ void runCompareArea(){
 }
 
 
-void compareAreas(float areaOne, float areaTwo){
+void compareAreas(double areaOne, double areaTwo){
 
 		if (areaOne < areaTwo){
 			smallArea = areaOne;
@@ -556,8 +556,8 @@ void runCameraRectangle()
 	 vector< vector< Point> > contours;
 	 findContours(imgThresholded.clone(), contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
 
-	 vector< Point> approx;
-
+	 vector<Point> approx;
+	 vector<double> detectedAreas;
 
 	for (int i = 0; i < contours.size(); i++)
 	{
@@ -565,18 +565,28 @@ void runCameraRectangle()
 		// to the contour perimeter
 		 approxPolyDP( Mat(contours[i]), approx,  arcLength( Mat(contours[i]), true)*0.02, true);
 
-		 if (approx.size() == 3)
+		 if (fabs(contourArea(contours[i])) < 100 || !isContourConvex(approx))
+			continue;
+
+		if (approx.size() == 4)
 		{
-			setLabel(imgOriginal, "Tri", contours[i]);    // Rec
-		 }
-		else if (approx.size() == 4)
-		{
-			setLabel(imgOriginal, "Rec", contours[i]);    // Rec
+			setLabel(imgOriginal, "Rec", contours[i]);
+			detectedAreas.push_back(fabs(contourArea(contours[i])));
+			cout << detectedAreas.size() <<endl;
+			if(detectedAreas.size() == 2){
+				for (int i=0; i< detectedAreas.size(); i++){
+					//double ratio = detectedAreas[i]/detectedAreas[i+1]; Ratio of two Areas
+					compareAreas(detectedAreas[i],detectedAreas[i+1]);
+					detectedAreas.clear();
+				}
+			}
 		} else{continue;}
 
 
 	}
+	
 
+	
 
 	imshow("Thresholded Image", imgThresholded); //show the thresholded image
 	imshow("Original", imgOriginal); //show the original image
