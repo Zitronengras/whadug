@@ -19,6 +19,8 @@ void runCompareArea();
 void compareAreas(float areaOne, float areaTwo);
 String toString(int number);
 void showTime(int minutes, int hours);
+void setLabel( Mat& im, const  string label,  vector< Point>& contour);
+void runCameraRectangle();
 
 double smallArea, bigArea;
 	
@@ -49,6 +51,7 @@ int main(){
 	cout << "f: Programm starten" << endl;
 	cout << "g: Kreis erkennen und mit \"s\" einen Snapshot machen" << endl;
 	cout << "h: Uhrzeit und Flaecheninhalt anzeigen" << endl;
+	cout << "n: Rechtecke erkennen" << endl;
 
 	for(;;){
 		cout << "Eingabe des Buchstaben: ";
@@ -109,6 +112,10 @@ case 'a':
 
 			case 'h': 
 				runCompareArea();
+			break;
+
+			case 'n':
+				runCameraRectangle();
 			break;
 
 			default: 
@@ -465,3 +472,129 @@ void showTime(int minutes, int hours){
 	imshow("Uhrzeit", img);	
 }
 //****************************CODE CARO ENDE********************************
+
+
+//****************************CODE NIELAB ********************************
+
+void setLabel( Mat& im, const  string label,  vector< Point>& contour)
+{
+	int fontface =  FONT_HERSHEY_SIMPLEX;
+	double scale = 0.4;
+	int thickness = 1;
+	int baseline = 0;
+
+	 Size text =  getTextSize(label, fontface, scale, thickness, &baseline);
+	 Rect r =  boundingRect(contour);
+
+	 Point pt(r.x + ((r.width - text.width) / 2), r.y + ((r.height + text.height) / 2));
+	 rectangle(im, pt +  Point(0, baseline), pt +  Point(text.width, -text.height), CV_RGB(255,255,255), CV_FILLED);
+	 putText(im, label, pt, fontface, scale, CV_RGB(0,0,0), thickness, 8);
+}
+
+
+void runCameraRectangle()
+ {
+    VideoCapture cap(0); //capture the video from web cam
+
+    if ( !cap.isOpened() )  // if not success, exit program
+    {
+         cout << "Cannot open the web cam" << endl;
+        // return -1;
+    }
+
+ /*   namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
+
+ int iLowH = 0;
+ int iHighH = 179;
+
+ int iLowS = 0; 
+ int iHighS = 255;
+
+ int iLowV = 0;
+ int iHighV = 255;
+
+ //Create trackbars in "Control" window
+ cvCreateTrackbar("LowH", "Control", &iLowH, 179); //Hue (0 - 179)
+ cvCreateTrackbar("HighH", "Control", &iHighH, 179);
+
+ cvCreateTrackbar("LowS", "Control", &iLowS, 255); //Saturation (0 - 255)
+ cvCreateTrackbar("HighS", "Control", &iHighS, 255);
+
+ cvCreateTrackbar("LowV", "Control", &iLowV, 255); //Value (0 - 255)
+ cvCreateTrackbar("HighV", "Control", &iHighV, 255);
+ */
+    while (true)
+    {
+        Mat imgOriginal;
+
+        bool bSuccess = cap.read(imgOriginal); // read a new frame from video
+
+         if (!bSuccess) //if not success, break loop
+        {
+             cout << "Cannot read a frame from video stream" << endl;
+             break;
+        }
+
+  Mat imgHSV;
+
+  cvtColor(imgOriginal, imgHSV, COLOR_BGR2HSV); //Convert the captured frame from BGR to HSV
+ 
+  Mat imgThresholded;
+
+ inRange(imgHSV, Scalar(0, 70, 0), Scalar(54, 255, 255), imgThresholded); //Threshold the image
+  //inRange(imgHSV, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded); //Threshold the image
+
+  //remove small objects from the foreground
+  erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
+  dilate( imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) ); 
+
+  //fill small holes in the foreground
+ // dilate( imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) ); 
+ // erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
+
+	// Find contours
+	 vector< vector< Point> > contours;
+	 findContours(imgThresholded.clone(), contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+
+	 vector< Point> approx;
+
+
+	for (int i = 0; i < contours.size(); i++)
+	{
+		// Approximate contour with accuracy proportional
+		// to the contour perimeter
+		 approxPolyDP( Mat(contours[i]), approx,  arcLength( Mat(contours[i]), true)*0.02, true);
+
+		 if (approx.size() == 3)
+		{
+			setLabel(imgOriginal, "Tri", contours[i]);    // Rec
+		 }
+		else if (approx.size() == 4)
+		{
+			setLabel(imgOriginal, "Rec", contours[i]);    // Rec
+		} else{continue;}
+
+
+	}
+
+
+	imshow("Thresholded Image", imgThresholded); //show the thresholded image
+	imshow("Original", imgOriginal); //show the original image
+
+
+
+ 
+        if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+       {
+            cout << "esc key is pressed by user" << endl;
+            break; 
+       }
+    }
+
+
+
+  // return 0;
+
+}
+
+//****************************CODE NIELAB ENDE********************************
