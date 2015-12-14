@@ -438,7 +438,7 @@ String toString(int number){
 
 void showTime(int minutes, int hours){
 	//just for test
-	Mat img = imread("C:\uhr.jpg", CV_LOAD_IMAGE_COLOR);
+	Mat img = imread("..\\src\\tulpen.jpg", CV_LOAD_IMAGE_COLOR);
 
 	String label = toString(hours) + ":" + toString(minutes);
 
