@@ -13,14 +13,27 @@ float calculateTriangleCenterX(float point1X, float point1Y, float point2X, floa
 float calculateTriangleCenterY(float point1X, float point1Y, float point2X, float point2Y, float point3X, float point3Y);
 int runCameraAndCircle();
 void runCompareArea();
-void compareAreas(float areaOne, float areaTwo);
+void compareAreas(double areaOne, double areaTwo, Point areaOneCenter, Point areaTwoCenter);
 String toString(int number);
 void showTime(int minutes, int hours);
 void setLabel( Mat& im, const  string label,  vector< Point>& contour);
 void runCameraRectangle();
 
+void setRecCenterMinutes(cv::Point receivedRecCenterMinutes);
+cv::Point getRecCenterMinutes();
+
+void setRecCenterHours(cv::Point receivedRecCenterHours);
+cv::Point getRecCenterHours();
+
+
 double smallArea, bigArea;
-	
+Point centerMinutes(0,0);
+Point centerHours(0,0);
+
+Point recCenterMinutes(0,0);
+Point recCenterHours(0,0);
+
+
 int main(){
 
 	char character;
@@ -49,6 +62,7 @@ int main(){
 	cout << "g: Kreis erkennen und mit \"s\" einen Snapshot machen" << endl;
 	cout << "h: Uhrzeit und Flaecheninhalt anzeigen" << endl;
 	cout << "n: Rechtecke erkennen" << endl;
+	cout << "m: Zeiger Mittelpunkte anzeigen" << endl;
 
 	for(;;){
 		cout << "Eingabe des Buchstaben: ";
@@ -109,6 +123,11 @@ case 'a':
 
 			case 'n':
 				runCameraRectangle();
+			break;
+
+			case 'm':
+				//Erst "n" ausführen, dann esc drücken um "m" zu starten.
+				cout << "Grosser Zeiger Center: " << centerMinutes << " \nKleiner Zeiger Center: " << centerHours << endl;
 			break;
 
 			default: 
@@ -232,18 +251,49 @@ void runCompareArea(){
 	waitKey(0);
 }
 
+void setRecCenterMinutes(cv::Point receivedRecCenterMinutes){
+	 recCenterMinutes = receivedRecCenterMinutes;
+}
 
-void compareAreas(double areaOne, double areaTwo){
+cv::Point getRecCenterMinutes(){
+	return recCenterMinutes;
+}
+
+void setRecCenterHours(cv::Point receivedRecCenterHours){
+	 recCenterHours = receivedRecCenterHours;
+}
+
+cv::Point getRecCenterHours(){
+	return recCenterHours;
+}
+
+void compareAreas(double areaOne, double areaTwo, Point areaOneCenter, Point areaTwoCenter){
 
 		if (areaOne < areaTwo){
 			smallArea = areaOne;
+			centerMinutes = areaOneCenter;
+			//setRecCenterMinutes(areaOneCenter);
+
 			bigArea = areaTwo;
+			centerHours = areaTwoCenter;
+			//setRecCenterHours(areaTwoCenter);
+
 			cout << "Grosser Zeiger: " << bigArea << " \nKleiner Zeiger: " << smallArea << endl;
+			cout << "Grosser Zeiger Center: " << centerMinutes << " \nKleiner Zeiger Center: " << centerHours << endl;
+			//cout << "Grosser Zeiger Center: " << getRecCenterMinutes << " \nKleiner Zeiger Center: " << getRecCenterHours << endl;
 		}
 		else if(areaOne > areaTwo){
 			smallArea = areaTwo;
+			centerMinutes = areaTwoCenter;
+			//setRecCenterMinutes(areaTwoCenter);
+
 			bigArea = areaOne;
+			centerHours = areaOneCenter;
+			//setRecCenterHours(areaOneCenter);
+			
 			cout << "Grosser Zeiger: " << bigArea << " \nKleiner Zeiger: " << smallArea << endl;
+			cout << "Grosser Zeiger Center: " << centerMinutes << " \nKleiner Zeiger Center: " << centerHours << endl;
+			//cout << "Grosser Zeiger Center: " << getRecCenterMinutes << " \nKleiner Zeiger Center: " << getRecCenterHours << endl;
 		}
 		else{
 			cout << "Fehler bei Vergleich der Flächeninhalte" << endl;
@@ -309,9 +359,10 @@ void setLabel( Mat& im, const  string label,  vector< Point>& contour)
 }
 
 
+
 void runCameraRectangle()
  {
-    VideoCapture cap(1); //capture the video from web cam
+    VideoCapture cap(0); //capture the video from web cam
 
     if ( !cap.isOpened() )  // if not success, exit program
     {
@@ -375,6 +426,7 @@ void runCameraRectangle()
 
 	 vector<Point> approx;
 	 vector<double> detectedAreas;
+	 vector<Point> centerPointArray;
 
 	for (int i = 0; i < contours.size(); i++)
 	{
@@ -387,13 +439,16 @@ void runCameraRectangle()
 
 		if (approx.size() == 4)
 		{
+			Moments M = moments (contours[i]);
 			setLabel(imgOriginal, "Rec", contours[i]);
 			detectedAreas.push_back(fabs(contourArea(contours[i])));
+			centerPointArray.push_back(Point((M.m10/M.m00),(M.m01/M.m00)));
 			cout << detectedAreas.size() <<endl;
 			if(detectedAreas.size() == 2){
 				for (int i=0; i< detectedAreas.size(); i++){
 					//double ratio = detectedAreas[i]/detectedAreas[i+1]; Ratio of two Areas
-					compareAreas(detectedAreas[i],detectedAreas[i+1]);
+					compareAreas(detectedAreas[i],detectedAreas[i+1], centerPointArray[i], centerPointArray[i+1]);
+					centerPointArray.clear();
 					detectedAreas.clear();
 				}
 			}
