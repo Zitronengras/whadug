@@ -12,10 +12,11 @@ using namespace cv;
 
 	ClockDetector clockDetector;	
 	ShapesDetector shapesDetector;
-
+	
+	Mat img;
 	Mat maskedClockImg;
 
-	Point clockCenter;
+	Point circleCenter;
 	Point triangleCenter;
 	Point minCenter;
 	Point hourCenter;
@@ -32,11 +33,9 @@ int main(){
 
 	while (true) {
 
-		//returns maskedClockImg
-		 maskedClockImg = clockDetector.detectClock();
-		 // TODO: Get clock center
-		 // clockCenter = ...
-
+		// find circleCenter
+		circleCenter = clockDetector.detectClock(img);
+		
 		//find triangle
 		triangleCenter = shapesDetector.getTriangleCenter(maskedClockImg);
 
@@ -50,6 +49,11 @@ int main(){
 		//convertAnglesToTime();
 
 		//showTime(minutes, hours);
+
+		if (waitKey(30) == 27){			//wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+			cout << "esc key is pressed by user" << endl;
+			break; 
+		}
 	}
 
 }
