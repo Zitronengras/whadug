@@ -41,6 +41,8 @@ int main(){
     }
 	bool bSuccess = cap.read(img);		// read a new frame from video
 
+	imshow("Original", img);			//show the original image
+
 		// find circleCenter
 		circleCenter = clockDetector.detectClock(img);
 		clockDetector.getMaskedImg();

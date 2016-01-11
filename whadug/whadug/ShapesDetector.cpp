@@ -141,13 +141,10 @@ void ShapesDetector::detectRectangles(Mat image){
 			detectedAreas.push_back(fabs(contourArea(contours[i])));
 			centerPointArray.push_back(Point((M.m10/M.m00),(M.m01/M.m00)));
 			cout << detectedAreas.size() <<endl;
-			if(detectedAreas.size() == 2){
-				for (int i=0; i< detectedAreas.size(); i++){
-					//double ratio = detectedAreas[i]/detectedAreas[i+1]; Ratio of two Areas
-					compareAreas(detectedAreas[i],detectedAreas[i+1], centerPointArray[i], centerPointArray[i+1]);
+			if(detectedAreas.size() == 2){	
+					compareAreas(detectedAreas[0], detectedAreas[1], centerPointArray[0], centerPointArray[1]);
 					centerPointArray.clear();
-					detectedAreas.clear();
-				}
+					detectedAreas.clear();				
 			}
 		} else{continue;}
 	}	

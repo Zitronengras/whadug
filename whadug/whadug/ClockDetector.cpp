@@ -30,13 +30,13 @@ Point ClockDetector::detectClock(Mat img){
 		cout << "Center" << circleCenter << endl;
 	}
 
-	imshow("Original", img);			//show the original image
+	
 	
 	return circleCenter;
 }
 
 void ClockDetector::getMaskedImg(){
-	while(radius != 0){
+	
 	Mat black(imgHSV.rows, imgHSV.cols, CV_8UC3, Scalar(0, 0, 0));
 	
 		circle(black, circleCenter, radius, Scalar(255, 255, 255),-1, 8, 0);
@@ -45,5 +45,5 @@ void ClockDetector::getMaskedImg(){
 	imgHSV.copyTo(maskedClockImg, black);
 	
 	imshow("Mask", maskedClockImg);
-	}
+	
 }
