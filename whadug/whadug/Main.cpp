@@ -73,8 +73,8 @@ void calcAngles() {
     cout << "tDeg: " << triangleDegree << endl;
     
 
-	double yMinDiff = minCenter.y - clockCenter.y;
-	double xMinDiff = minCenter.x - clockCenter.x;
+	double yMinDiff = minCenter.y - circleCenter.y;
+	double xMinDiff = minCenter.x - circleCenter.x;
     // Winkel des Minutenzeigers in Radians
     double mRad = atan2(yMinDiff, xMinDiff);
     
@@ -96,8 +96,8 @@ void calcAngles() {
     
     cout << "mDeg: " << minDegree << endl;
     
-	double yHourDiff = hourCenter.y - clockCenter.y;
-	double xHourDiff = hourCenter.x - clockCenter.x;
+	double yHourDiff = hourCenter.y - circleCenter.y;
+	double xHourDiff = hourCenter.x - circleCenter.x;
 
     // Winkel des Stundenzeigers in Radians
     double hRad = atan2(yHourDiff, xHourDiff);
