@@ -19,19 +19,15 @@ void showTime(int minutes, int hours);
 void setLabel( Mat& im, const  string label,  vector< Point>& contour);
 void runCameraRectangle();
 
-void setRecCenterMinutes(cv::Point receivedRecCenterMinutes);
-cv::Point getRecCenterMinutes();
-
-void setRecCenterHours(cv::Point receivedRecCenterHours);
-cv::Point getRecCenterHours();
-
-
 double smallArea, bigArea;
 Point centerMinutes(0,0);
 Point centerHours(0,0);
 
 Point recCenterMinutes(0,0);
 Point recCenterHours(0,0);
+
+Point rectangleCenterHours(0,0);
+Point rectangleCenterMinutes(0,0);
 
 
 int main(){
@@ -251,20 +247,21 @@ void runCompareArea(){
 	waitKey(0);
 }
 
-void setRecCenterMinutes(cv::Point receivedRecCenterMinutes){
-	 recCenterMinutes = receivedRecCenterMinutes;
+
+void setRectangleCenterHours(Point area){
+	rectangleCenterHours = area;
 }
 
-cv::Point getRecCenterMinutes(){
-	return recCenterMinutes;
+Point getRectangleCenterHours(){
+	return rectangleCenterHours;
 }
 
-void setRecCenterHours(cv::Point receivedRecCenterHours){
-	 recCenterHours = receivedRecCenterHours;
+void setRectangleCenterMinutes(Point area){
+	rectangleCenterMinutes = area;
 }
 
-cv::Point getRecCenterHours(){
-	return recCenterHours;
+Point getRectangleCenterMinutes(){
+	return rectangleCenterMinutes;
 }
 
 void compareAreas(double areaOne, double areaTwo, Point areaOneCenter, Point areaTwoCenter){
@@ -272,28 +269,28 @@ void compareAreas(double areaOne, double areaTwo, Point areaOneCenter, Point are
 		if (areaOne < areaTwo){
 			smallArea = areaOne;
 			centerMinutes = areaOneCenter;
-			//setRecCenterMinutes(areaOneCenter);
+			setRectangleCenterMinutes(areaOneCenter);
 
 			bigArea = areaTwo;
 			centerHours = areaTwoCenter;
-			//setRecCenterHours(areaTwoCenter);
+			setRectangleCenterHours(areaTwoCenter);
 
 			cout << "Grosser Zeiger: " << bigArea << " \nKleiner Zeiger: " << smallArea << endl;
 			cout << "Grosser Zeiger Center: " << centerMinutes << " \nKleiner Zeiger Center: " << centerHours << endl;
-			//cout << "Grosser Zeiger Center: " << getRecCenterMinutes << " \nKleiner Zeiger Center: " << getRecCenterHours << endl;
+			cout << "areaOne < areaTwo" << getRectangleCenterMinutes() << " -- "<< getRectangleCenterHours() << endl;
 		}
 		else if(areaOne > areaTwo){
 			smallArea = areaTwo;
 			centerMinutes = areaTwoCenter;
-			//setRecCenterMinutes(areaTwoCenter);
+			setRectangleCenterMinutes(areaTwoCenter);
 
 			bigArea = areaOne;
 			centerHours = areaOneCenter;
-			//setRecCenterHours(areaOneCenter);
-			
+			setRectangleCenterHours(areaOneCenter);
+	
 			cout << "Grosser Zeiger: " << bigArea << " \nKleiner Zeiger: " << smallArea << endl;
 			cout << "Grosser Zeiger Center: " << centerMinutes << " \nKleiner Zeiger Center: " << centerHours << endl;
-			//cout << "Grosser Zeiger Center: " << getRecCenterMinutes << " \nKleiner Zeiger Center: " << getRecCenterHours << endl;
+			cout << "areaOne > areaTwo" << getRectangleCenterMinutes() << " -- "<< getRectangleCenterHours() << endl;
 		}
 		else{
 			cout << "Fehler bei Vergleich der Flächeninhalte" << endl;
