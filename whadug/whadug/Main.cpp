@@ -12,7 +12,8 @@ using namespace cv;
 
 	ClockDetector clockDetector;	
 	ShapesDetector shapesDetector;
-	
+	VideoCapture cap;
+
 	Mat img;
 	Mat maskedClockImg;
 
@@ -31,16 +32,24 @@ using namespace cv;
 
 int main(){		
 
+	//Camera
+	cap = VideoCapture(0);					// capture the video from web cam
+	
 	while (true) {
+		if(!cap.isOpened()){					// if not success, exit program
+         cout << "Cannot open the web cam" << endl;
+    }
+	bool bSuccess = cap.read(img);		// read a new frame from video
 
 		// find circleCenter
 		circleCenter = clockDetector.detectClock(img);
+		clockDetector.getMaskedImg();
 		
 		//find triangle
-		triangleCenter = shapesDetector.getTriangleCenter(maskedClockImg);
+		//triangleCenter = shapesDetector.getTriangleCenter(maskedClockImg);
 
 		//finde rectangle
-		shapesDetector.detectRectangles(maskedClockImg);
+		//shapesDetector.detectRectangles(maskedClockImg);
 		// TODO: Get minCenter & hourCenter
 		// minCenter = ...
 		// hourCenter = ...

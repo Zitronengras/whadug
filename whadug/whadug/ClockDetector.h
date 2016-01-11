@@ -15,6 +15,7 @@ public:
 	Mat maskedClockImg;
 
 	Point detectClock(Mat img);
+	void getMaskedImg();
 
 	ClockDetector(void);
 	~ClockDetector(void);	
@@ -22,10 +23,11 @@ public:
 private:
 	Mat img,
 	imgHSV,
-	imgBlue;
+	imgBlue,
+	black;
 
 	int radius;
 	char filename[20];
 
-	VideoCapture cap;
+	/*VideoCapture cap;*/
 };
