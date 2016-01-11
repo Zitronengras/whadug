@@ -24,7 +24,7 @@ Point ShapesDetector::getTriangleCenter(Mat image) {
     Mat binaryImage;
     Point triangleCenter;
     
-    inRange(image, Scalar(50,150,0), Scalar(90,255,255), binaryImage);
+    inRange(image, Scalar(40,100,0), Scalar(90,255,255), binaryImage);
 
 	imshow("binaryImg", binaryImage);
     
@@ -51,6 +51,7 @@ Point ShapesDetector::getTriangleCenter(Mat image) {
             Moments M = moments(contours[i]);
             triangleCenter = cv::Point(int(M.m10/M.m00), int(M.m01/M.m00));
 			cout << "triangleCenter: " << triangleCenter << endl;
+			everythingDetected = true;
         }
     }
     
@@ -69,26 +70,26 @@ void ShapesDetector::detectRectangles(Mat image){
     //    // return -1;
     //}
 
- //   namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
+    namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
 
- //int iLowH = 0;
- //int iHighH = 179;
+ int iLowH = 0;
+ int iHighH = 179;
 
- //int iLowS = 0; 
- //int iHighS = 255;
+ int iLowS = 0; 
+ int iHighS = 255;
 
- //int iLowV = 0;
- //int iHighV = 255;
+ int iLowV = 0;
+ int iHighV = 255;
 
  ////Create trackbars in "Control" window
- //cvCreateTrackbar("LowH", "Control", &iLowH, 179); //Hue (0 - 179)
- //cvCreateTrackbar("HighH", "Control", &iHighH, 179);
+ cvCreateTrackbar("LowH", "Control", &iLowH, 179); //Hue (0 - 179)
+ cvCreateTrackbar("HighH", "Control", &iHighH, 179);
 
- //cvCreateTrackbar("LowS", "Control", &iLowS, 255); //Saturation (0 - 255)
- //cvCreateTrackbar("HighS", "Control", &iHighS, 255);
+ cvCreateTrackbar("LowS", "Control", &iLowS, 255); //Saturation (0 - 255)
+ cvCreateTrackbar("HighS", "Control", &iHighS, 255);
 
- //cvCreateTrackbar("LowV", "Control", &iLowV, 255); //Value (0 - 255)
- //cvCreateTrackbar("HighV", "Control", &iHighV, 255);
+ cvCreateTrackbar("LowV", "Control", &iLowV, 255); //Value (0 - 255)
+ cvCreateTrackbar("HighV", "Control", &iHighV, 255);
  
     //while (true)
     //{
@@ -107,7 +108,7 @@ void ShapesDetector::detectRectangles(Mat image){
  
 	Mat imgThresholded;
 
-	inRange(image, Scalar(0, 48,117), Scalar(94, 255, 255), imgThresholded); //Threshold the image
+	inRange(image, Scalar(0, 100,117), Scalar(30, 255, 255), imgThresholded); //Threshold the image
 	//inRange(imgHSV, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded); //Threshold the image
 
 	//remove small objects from the foreground
@@ -129,31 +130,37 @@ void ShapesDetector::detectRectangles(Mat image){
 	for (int i = 0; i < contours.size(); i++){
 		// Approximate contour with accuracy proportional
 		// to the contour perimeter
-		 approxPolyDP( Mat(contours[i]), approx,  arcLength( Mat(contours[i]), true)*0.02, true);
+		 approxPolyDP( Mat(contours[i]), approx, arcLength( Mat(contours[i]), true)*0.02, true);
 
 		 if (fabs(contourArea(contours[i])) < 100 || !isContourConvex(approx))
 			continue;
-
-		if (approx.size() == 4)
-		{
+		cout << "Rechteckkanten: " << approx.size() << endl;
+		if (approx.size() == 4) {
 			Moments M = moments (contours[i]);
-			//setLabel(imgOriginal, "Rec", contours[i]);
+			//setLabel(image, "Rec", contours[i]);
 			detectedAreas.push_back(fabs(contourArea(contours[i])));
 			centerPointArray.push_back(Point((M.m10/M.m00),(M.m01/M.m00)));
 			cout << detectedAreas.size() <<endl;
-			if(detectedAreas.size() == 2){	
-					compareAreas(detectedAreas[0], detectedAreas[1], centerPointArray[0], centerPointArray[1]);
+			if(detectedAreas.size() == 2) {	
+					assignCenterPoints(detectedAreas[0], detectedAreas[1], centerPointArray[0], centerPointArray[1]);
 					centerPointArray.clear();
-					detectedAreas.clear();				
+					detectedAreas.clear();
+					everythingDetected = true;
+					break;
+			} else {
+				everythingDetected = false;
 			}
-		} else{continue;}
+		} else {
+			everythingDetected = false;
+			continue;
+		}
 	}	
 
 	imshow("Thresholded Image", imgThresholded); //show the thresholded image
 	
  }
 
-void ShapesDetector::compareAreas(double areaOne, double areaTwo, Point areaOneCenter, Point areaTwoCenter){
+void ShapesDetector::assignCenterPoints(double areaOne, double areaTwo, Point areaOneCenter, Point areaTwoCenter){
 
 	//double tRad = atan2(2.0,2.0);
 
@@ -163,12 +170,12 @@ void ShapesDetector::compareAreas(double areaOne, double areaTwo, Point areaOneC
 
 		if (areaOne < areaTwo){
 			smallArea = areaOne;
-			centerMinutes = areaOneCenter;
-			setRectangleCenterMinutes(areaOneCenter);
+			centerHours = areaOneCenter;
+			setRectangleCenterHours(areaOneCenter);
 
 			bigArea = areaTwo;
-			centerHours = areaTwoCenter;
-			setRectangleCenterHours(areaTwoCenter);
+			centerMinutes = areaTwoCenter;
+			setRectangleCenterMinutes(areaTwoCenter);
 
 			cout << "Grosser Zeiger: " << bigArea << " \nKleiner Zeiger: " << smallArea << endl;
 			cout << "Grosser Zeiger Center: " << centerMinutes << " \nKleiner Zeiger Center: " << centerHours << endl;
@@ -176,12 +183,12 @@ void ShapesDetector::compareAreas(double areaOne, double areaTwo, Point areaOneC
 		}
 		else if(areaOne > areaTwo){
 			smallArea = areaTwo;
-			centerMinutes = areaTwoCenter;
-			setRectangleCenterMinutes(areaTwoCenter);
+			centerHours = areaTwoCenter;
+			setRectangleCenterHours(areaTwoCenter);
 
 			bigArea = areaOne;
-			centerHours = areaOneCenter;
-			setRectangleCenterHours(areaOneCenter);
+			centerMinutes = areaOneCenter;
+			setRectangleCenterMinutes(areaOneCenter);
 	
 			cout << "Grosser Zeiger: " << bigArea << " \nKleiner Zeiger: " << smallArea << endl;
 			cout << "Grosser Zeiger Center: " << centerMinutes << " \nKleiner Zeiger Center: " << centerHours << endl;

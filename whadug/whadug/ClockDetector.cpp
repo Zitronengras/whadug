@@ -28,22 +28,22 @@ Point ClockDetector::detectClock(Mat img){
 		circle(imgBlue, circleCenter, radius, Scalar(255, 0, 255), 5);
 		cout << "Radius" << radius << endl;
 		cout << "Center" << circleCenter << endl;
-	}
-
-	
+	}	
 	
 	return circleCenter;
 }
 
-void ClockDetector::getMaskedImg(){
+Mat ClockDetector::getMaskedImg(){
 	
-	Mat black(imgHSV.rows, imgHSV.cols, CV_8UC3, Scalar(0, 0, 0));
+	black = Mat(imgHSV.rows, imgHSV.cols, CV_8UC3, Scalar(0, 0, 0));
+
+	maskedClockImg = Mat(imgHSV.rows, imgHSV.cols, CV_8UC3, Scalar(0, 0, 0));
 	
-		circle(black, circleCenter, radius, Scalar(255, 255, 255),-1, 8, 0);
+	circle(black, circleCenter, radius, Scalar(255, 255, 255),-1, 8, 0);
 	
-	Mat maskedClockImg;
 	imgHSV.copyTo(maskedClockImg, black);
 	
 	imshow("Mask", maskedClockImg);
+	return maskedClockImg;
 	
 }

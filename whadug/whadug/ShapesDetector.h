@@ -19,11 +19,12 @@ public:
 	Point getTriangleCenter(Mat image);
 	//void setLabel(Mat& im, const string label,  vector<Point>& contour);
 	void detectRectangles(Mat image);
-	void compareAreas(double areaOne, double areaTwo, Point areaOneCenter, Point areaTwoCenter);
+	void assignCenterPoints(double areaOne, double areaTwo, Point areaOneCenter, Point areaTwoCenter);
 	void ShapesDetector::setRectangleCenterHours(Point area);
 		Point ShapesDetector::getRectangleCenterHours();
 	void ShapesDetector::setRectangleCenterMinutes(Point area);
 	Point ShapesDetector::getRectangleCenterMinutes();
+	bool everythingDetected;
 
 private:
 	Point minPt;

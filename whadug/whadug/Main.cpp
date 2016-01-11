@@ -30,44 +30,7 @@ using namespace cv;
 	int minutes;
 
 
-int main(){		
 
-	//Camera
-	cap = VideoCapture(0);					// capture the video from web cam
-	
-	while (true) {
-		if(!cap.isOpened()){					// if not success, exit program
-         cout << "Cannot open the web cam" << endl;
-    }
-	bool bSuccess = cap.read(img);		// read a new frame from video
-
-	imshow("Original", img);			//show the original image
-
-		// find circleCenter
-		circleCenter = clockDetector.detectClock(img);
-		clockDetector.getMaskedImg();
-		
-		//find triangle
-		//triangleCenter = shapesDetector.getTriangleCenter(maskedClockImg);
-
-		//finde rectangle
-		//shapesDetector.detectRectangles(maskedClockImg);
-		// TODO: Get minCenter & hourCenter
-		// minCenter = ...
-		// hourCenter = ...
-
-		//calcAngles();
-		//convertAnglesToTime();
-
-		//showTime(minutes, hours);
-
-		if (waitKey(30) == 27){			//wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
-			cout << "esc key is pressed by user" << endl;
-			break; 
-		}
-	}
-
-}
 
 void calcAngles() {
     
@@ -161,6 +124,9 @@ void convertAnglesToTime() {
     else {
         // Moegliche Winkel: 0-(-180). Jede Minute entspricht einem Bereich von 6 Grad.
         minutes = 60-(minDegree/-6);
+		if (minutes == 60) {
+			minutes = 0;
+		}
     }
     cout << "Minutes: " << minutes << endl;
     
@@ -177,11 +143,27 @@ String toString(int number){
 
 }
 
-void showTime(int minutes, int hours){
+void showTime(int minutes, int hours, Mat img){
 	//just for test
-	Mat img = imread("..\\src\\tulpen.jpg", CV_LOAD_IMAGE_COLOR);
+	//Mat img = imread("..\\src\\tulpen.jpg", CV_LOAD_IMAGE_COLOR);
 
-	String label = toString(hours) + ":" + toString(minutes);
+	String hoursString;
+	if (hours < 10) {
+		hoursString = "0" + toString(hours);
+	} else {
+		hoursString = toString(hours);
+	}
+
+	String minutesString;
+	if (minutes < 10) {
+		minutesString = "0" + toString(minutes);
+	} else {
+		minutesString = toString(minutes);
+	}
+
+
+
+	String label = hoursString + ":" + minutesString;
 
 	// rectangle for GUI
 	Point RectUpLeft = Point(50, 0);
@@ -202,8 +184,52 @@ void showTime(int minutes, int hours){
 	//display time
 	putText(img, label, Point(textX, textY), fontface, scale, Scalar(215, 215, 215), thickness, 8);
 	
-	namedWindow("Uhrzeit");
-	imshow("Uhrzeit", img);	
+	//namedWindow("Uhrzeit");
+	//imshow("Uhrzeit", img);	
+}
+
+int main(){		
+
+	//Camera
+	cap = VideoCapture(1);					// capture the video from web cam
+	
+	while (true) {
+		if(!cap.isOpened()){					// if not success, exit program
+         cout << "Cannot open the web cam" << endl;
+    }
+	bool bSuccess = cap.read(img);		// read a new frame from video
+
+	
+
+		// find circleCenter
+		circleCenter = clockDetector.detectClock(img);
+		maskedClockImg = clockDetector.getMaskedImg();
+		
+		//find triangle
+		triangleCenter = shapesDetector.getTriangleCenter(maskedClockImg);
+
+		//finde rectangle
+		shapesDetector.detectRectangles(maskedClockImg);
+		
+		// TODO: Get minCenter & hourCenter
+		if (shapesDetector.everythingDetected) {
+			minCenter = shapesDetector.getRectangleCenterMinutes();
+			hourCenter = shapesDetector.getRectangleCenterHours();
+
+			calcAngles();
+			convertAnglesToTime();
+
+			showTime(minutes, hours, img);
+		}
+
+		imshow("Original", img);			//show the original image
+
+		if (waitKey(30) == 27){			//wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+			cout << "esc key is pressed by user" << endl;
+			break; 
+		}
+	}
+
 }
 
 //

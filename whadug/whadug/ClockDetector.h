@@ -12,10 +12,10 @@ class ClockDetector
 
 public:
 	Point circleCenter;
-	Mat maskedClockImg;
+	
 
 	Point detectClock(Mat img);
-	void getMaskedImg();
+	Mat getMaskedImg();
 
 	ClockDetector(void);
 	~ClockDetector(void);	
@@ -24,7 +24,8 @@ private:
 	Mat img,
 	imgHSV,
 	imgBlue,
-	black;
+	black,
+	maskedClockImg;
 
 	int radius;
 	char filename[20];
