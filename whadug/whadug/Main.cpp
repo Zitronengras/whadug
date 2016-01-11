@@ -61,8 +61,8 @@ int main(){
 void calcAngles() {
     
 
-	double yTriDiff = triangleCenter.y- clockCenter.y;
-	double xTriDiff = triangleCenter.x- clockCenter.x;
+	double yTriDiff = triangleCenter.y- circleCenter.y;
+	double xTriDiff = triangleCenter.x- circleCenter.x;
 
     // Winkel des Dreiecks in Radians
     double tRad = atan2(yTriDiff, xTriDiff);
