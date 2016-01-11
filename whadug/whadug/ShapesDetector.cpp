@@ -3,6 +3,9 @@
 using namespace std;
 using namespace cv;
 
+Point rectangleCenterHours(0,0);
+Point rectangleCenterMinutes(0,0);
+
 ShapesDetector::ShapesDetector(void)
 {
 }
@@ -121,6 +124,7 @@ void ShapesDetector::detectRectangles(Mat image){
 
 	vector<Point> approx;
 	vector<double> detectedAreas;
+	vector<Point> centerPointArray;
 
 	for (int i = 0; i < contours.size(); i++){
 		// Approximate contour with accuracy proportional
@@ -132,15 +136,16 @@ void ShapesDetector::detectRectangles(Mat image){
 
 		if (approx.size() == 4)
 		{
-			
-			cout << "detectRectangles" << endl;
+			Moments M = moments (contours[i]);
 			//setLabel(imgOriginal, "Rec", contours[i]);
 			detectedAreas.push_back(fabs(contourArea(contours[i])));
+			centerPointArray.push_back(Point((M.m10/M.m00),(M.m01/M.m00)));
 			cout << detectedAreas.size() <<endl;
 			if(detectedAreas.size() == 2){
 				for (int i=0; i< detectedAreas.size(); i++){
 					//double ratio = detectedAreas[i]/detectedAreas[i+1]; Ratio of two Areas
-					compareAreas(detectedAreas[i],detectedAreas[i+1]);
+					compareAreas(detectedAreas[i],detectedAreas[i+1], centerPointArray[i], centerPointArray[i+1]);
+					centerPointArray.clear();
 					detectedAreas.clear();
 				}
 			}
@@ -151,28 +156,58 @@ void ShapesDetector::detectRectangles(Mat image){
 	
  }
 
-void ShapesDetector::compareAreas(double areaOne, double areaTwo){
+void ShapesDetector::compareAreas(double areaOne, double areaTwo, Point areaOneCenter, Point areaTwoCenter){
 
 	//double tRad = atan2(2.0,2.0);
 
 	double smallArea;
 	double bigArea;
+	Point centerMinutes, centerHours;
 
-	if (areaOne < areaTwo){
-		smallArea = areaOne;
-		bigArea = areaTwo;
-		cout << "Grosser Zeiger: " << bigArea << " \nKleiner Zeiger: " << smallArea << endl;
-	}
-	else if(areaOne > areaTwo){
-		smallArea = areaTwo;
-		bigArea = areaOne;
-		cout << "Grosser Zeiger: " << bigArea << " \nKleiner Zeiger: " << smallArea << endl;
-	}
-	else{
-		cout << "Fehler bei Vergleich der Flächeninhalte" << endl;
-	}
+		if (areaOne < areaTwo){
+			smallArea = areaOne;
+			centerMinutes = areaOneCenter;
+			setRectangleCenterMinutes(areaOneCenter);
+
+			bigArea = areaTwo;
+			centerHours = areaTwoCenter;
+			setRectangleCenterHours(areaTwoCenter);
+
+			cout << "Grosser Zeiger: " << bigArea << " \nKleiner Zeiger: " << smallArea << endl;
+			cout << "Grosser Zeiger Center: " << centerMinutes << " \nKleiner Zeiger Center: " << centerHours << endl;
+			cout << "areaOne < areaTwo" << getRectangleCenterMinutes() << " -- "<< getRectangleCenterHours() << endl;
+		}
+		else if(areaOne > areaTwo){
+			smallArea = areaTwo;
+			centerMinutes = areaTwoCenter;
+			setRectangleCenterMinutes(areaTwoCenter);
+
+			bigArea = areaOne;
+			centerHours = areaOneCenter;
+			setRectangleCenterHours(areaOneCenter);
+	
+			cout << "Grosser Zeiger: " << bigArea << " \nKleiner Zeiger: " << smallArea << endl;
+			cout << "Grosser Zeiger Center: " << centerMinutes << " \nKleiner Zeiger Center: " << centerHours << endl;
+			cout << "areaOne > areaTwo" << getRectangleCenterMinutes() << " -- "<< getRectangleCenterHours() << endl;
+		}
+		else{
+			cout << "Fehler bei Vergleich der Flächeninhalte" << endl;
+		}
 }
 
+void ShapesDetector::setRectangleCenterHours(Point area){
+	rectangleCenterHours = area;
+}
 
+Point ShapesDetector::getRectangleCenterHours(){
+	return rectangleCenterHours;
+}
 
+void ShapesDetector::setRectangleCenterMinutes(Point area){
+	rectangleCenterMinutes = area;
+}
+
+Point ShapesDetector::getRectangleCenterMinutes(){
+	return rectangleCenterMinutes;
+}
 

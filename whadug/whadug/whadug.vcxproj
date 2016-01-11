@@ -77,7 +77,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ClockDetector.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="ShapesDetector.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ClockDetector.h" />
+    <ClInclude Include="ShapesDetector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
