@@ -24,6 +24,7 @@ public:
 		Point ShapesDetector::getRectangleCenterHours();
 	void ShapesDetector::setRectangleCenterMinutes(Point area);
 	Point ShapesDetector::getRectangleCenterMinutes();
+	bool triangleDetected;
 	bool everythingDetected;
 
 private:

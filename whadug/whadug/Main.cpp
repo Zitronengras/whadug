@@ -205,23 +205,23 @@ int main(){
 		circleCenter = clockDetector.detectClock(img);
 		maskedClockImg = clockDetector.getMaskedImg();
 		
-		//find triangle
-		triangleCenter = shapesDetector.getTriangleCenter(maskedClockImg);
+		if(clockDetector.clockDetected){
+			//find triangle
+			triangleCenter = shapesDetector.getTriangleCenter(maskedClockImg);
+			if(shapesDetector.triangleDetected){
+				//finde rectangle
+				shapesDetector.detectRectangles(maskedClockImg);
+				if (shapesDetector.everythingDetected) {
+					minCenter = shapesDetector.getRectangleCenterMinutes();
+					hourCenter = shapesDetector.getRectangleCenterHours();
 
-		//finde rectangle
-		shapesDetector.detectRectangles(maskedClockImg);
-		
-		// TODO: Get minCenter & hourCenter
-		if (shapesDetector.everythingDetected) {
-			minCenter = shapesDetector.getRectangleCenterMinutes();
-			hourCenter = shapesDetector.getRectangleCenterHours();
-
-			calcAngles();
-			convertAnglesToTime();
-
-			showTime(minutes, hours, img);
+					calcAngles();
+					convertAnglesToTime();
+				}
+			}					
 		}
-
+		
+		showTime(minutes, hours, img);
 		imshow("Original", img);			//show the original image
 
 		if (waitKey(30) == 27){			//wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop

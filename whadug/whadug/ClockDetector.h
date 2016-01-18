@@ -18,7 +18,9 @@ public:
 	Mat getMaskedImg();
 
 	ClockDetector(void);
-	~ClockDetector(void);	
+	~ClockDetector(void);
+
+	bool clockDetected;
 
 private:
 	Mat img,

@@ -8,6 +8,8 @@ Point rectangleCenterMinutes(0,0);
 
 ShapesDetector::ShapesDetector(void)
 {
+	everythingDetected = false;
+	triangleDetected = false;
 }
 
 
@@ -24,7 +26,7 @@ Point ShapesDetector::getTriangleCenter(Mat image) {
     Mat binaryImage;
     Point triangleCenter;
     
-    inRange(image, Scalar(40,100,0), Scalar(90,255,255), binaryImage);
+    inRange(image, Scalar(30,0,0), Scalar(80,255,255), binaryImage);
 
 	imshow("binaryImg", binaryImage);
     
@@ -51,9 +53,23 @@ Point ShapesDetector::getTriangleCenter(Mat image) {
             Moments M = moments(contours[i]);
             triangleCenter = cv::Point(int(M.m10/M.m00), int(M.m01/M.m00));
 			cout << "triangleCenter: " << triangleCenter << endl;
-			everythingDetected = true;
+			triangleDetected = true;
+			break;
         }
-    }
+	}
+
+	if(!triangleDetected && contours.size() != 0){
+		double biggestArea = contourArea(contours[0]);
+		triangleDetected = true;
+
+		for(int i = 1; i < contours.size(); i++){
+			if(contourArea(contours[i]) > biggestArea){
+				biggestArea = contourArea(contours[i]);
+				Moments M = moments(contours[i]);
+				triangleCenter = cv::Point(int(M.m10/M.m00), int(M.m01/M.m00));
+			}
+		}
+	}
     
    
     
@@ -70,26 +86,26 @@ void ShapesDetector::detectRectangles(Mat image){
     //    // return -1;
     //}
 
-    namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
+ //   namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
 
- int iLowH = 0;
- int iHighH = 179;
+ //int iLowH = 0;
+ //int iHighH = 179;
 
- int iLowS = 0; 
- int iHighS = 255;
+ //int iLowS = 0; 
+ //int iHighS = 255;
 
- int iLowV = 0;
- int iHighV = 255;
+ //int iLowV = 0;
+ //int iHighV = 255;
 
  ////Create trackbars in "Control" window
- cvCreateTrackbar("LowH", "Control", &iLowH, 179); //Hue (0 - 179)
- cvCreateTrackbar("HighH", "Control", &iHighH, 179);
+ //cvCreateTrackbar("LowH", "Control", &iLowH, 179); //Hue (0 - 179)
+ //cvCreateTrackbar("HighH", "Control", &iHighH, 179);
 
- cvCreateTrackbar("LowS", "Control", &iLowS, 255); //Saturation (0 - 255)
- cvCreateTrackbar("HighS", "Control", &iHighS, 255);
+ //cvCreateTrackbar("LowS", "Control", &iLowS, 255); //Saturation (0 - 255)
+ //cvCreateTrackbar("HighS", "Control", &iHighS, 255);
 
- cvCreateTrackbar("LowV", "Control", &iLowV, 255); //Value (0 - 255)
- cvCreateTrackbar("HighV", "Control", &iHighV, 255);
+ //cvCreateTrackbar("LowV", "Control", &iLowV, 255); //Value (0 - 255)
+ //cvCreateTrackbar("HighV", "Control", &iHighV, 255);
  
     //while (true)
     //{
@@ -108,7 +124,7 @@ void ShapesDetector::detectRectangles(Mat image){
  
 	Mat imgThresholded;
 
-	inRange(image, Scalar(0, 100,117), Scalar(30, 255, 255), imgThresholded); //Threshold the image
+	inRange(image, Scalar(0,100,0), Scalar(20, 255, 255), imgThresholded); //Threshold the image
 	//inRange(imgHSV, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded); //Threshold the image
 
 	//remove small objects from the foreground
