@@ -11,18 +11,17 @@ class ClockDetector
 {
 
 public:
-	Point circleCenter;
-	
 
+	Point circleCenter;
 	Point detectClock(Mat img);
 	Mat getMaskedImg();
-
-	ClockDetector(void);
-	~ClockDetector(void);
-
 	bool clockDetected;
 
+	ClockDetector(void);
+	~ClockDetector(void);	
+
 private:
+
 	Mat img,
 	imgHSV,
 	imgBlue,
@@ -32,5 +31,4 @@ private:
 	int radius;
 	char filename[20];
 
-	/*VideoCapture cap;*/
 };

@@ -17,12 +17,12 @@ Point ClockDetector::detectClock(Mat img){
 	inRange(imgHSV, Scalar(90, 0, 0), Scalar(110, 255, 255), imgBlue);		// Threshold the HSV image, keep only blue pixles
 	GaussianBlur(imgBlue, imgBlue, Size(9, 9), 2, 2);
 	
-	//Use the Hough transform to detect circles in the combined imgBlue image
+	// Use the Hough transform to detect circles in the combined imgBlue image
 	vector<Vec3f> circles;					// xc, yc und r
 	HoughCircles(imgBlue, circles, CV_HOUGH_GRADIENT, 1, imgBlue.rows/8, 200, 50, 100, 1000);
 
-	//loop over detected circles and outline them on img
-	for(int i = 0; i < circles.size(); i++){
+	// loop over detected circles and outline them on img
+	for (int i = 0; i < circles.size(); i++) {
 		circleCenter = Point(cvRound(circles[i][0]), cvRound(circles[i][1]));
 		radius = cvRound(circles[i][2]);
 		circle(imgBlue, circleCenter, 4, Scalar(255, 0, 0), -1, 8, 0);

@@ -11,30 +11,30 @@ using namespace cv;
 class ShapesDetector
 {
 public:
-	//Point triangleCenter;
 	
 	ShapesDetector(void);
 	~ShapesDetector(void);
 
 	Point getTriangleCenter(Mat image);
-	//void setLabel(Mat& im, const string label,  vector<Point>& contour);
 	void detectRectangles(Mat image);
 	void assignCenterPoints(double areaOne, double areaTwo, Point areaOneCenter, Point areaTwoCenter);
-	void ShapesDetector::setRectangleCenterHours(Point area);
-		Point ShapesDetector::getRectangleCenterHours();
-	void ShapesDetector::setRectangleCenterMinutes(Point area);
-	Point ShapesDetector::getRectangleCenterMinutes();
+	void setRectangleCenterHours(Point area);
+	Point getRectangleCenterHours();
+	void setRectangleCenterMinutes(Point area);
+	Point getRectangleCenterMinutes();
 	bool triangleDetected;
 	bool everythingDetected;
 
 private:
+
 	Point minPt;
 	Point hourPt;
 	Point centerPt;
+	Point rectangleCenterHours(0,0);
+	Point rectangleCenterMinutes(0,0);
 
 	Point rectangleCenterHours;
 	Point rectangleCenterMinutes;
-
 
 	Mat originalImg;
 
