@@ -16,41 +16,44 @@ ShapesDetector::~ShapesDetector(void)
 
 Point ShapesDetector::getTriangleCenter(Mat image) {
 
-    Mat binaryImage;
-    Point triangleCenter;
+    	Mat binaryImage;
+    	Point triangleCenter;
     
-    inRange(image, Scalar(30,0,0), Scalar(80,255,255), binaryImage);
+    	// create binary image with range of the green hsv-value
+    	inRange(image, Scalar(30,0,0), Scalar(80,255,255), binaryImage);
 
 	imshow("binaryImg", binaryImage);
     
-    morphologyEx(binaryImage, binaryImage, MORPH_OPEN, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
+    	// combination of erosion with dilation
+    	morphologyEx(binaryImage, binaryImage, MORPH_OPEN, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
     
-    // find contours
-    vector<vector<Point>> contours;
-    findContours(binaryImage.clone(), contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-    vector<Point> approx;
+    	// finding contours
+    	vector<vector<Point>> contours;
+    	findContours(binaryImage.clone(), contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+    	vector<Point> approx;
 
-    for (int i=0; i<contours.size(); i++) {
+    	for (int i=0; i<contours.size(); i++) {
         
-        // approximate contours
-        approxPolyDP(Mat(contours[i]), approx, arcLength(Mat(contours[i]), true) * 0.05, true);
+        	// reducing number of points
+        	approxPolyDP(Mat(contours[i]), approx, arcLength(Mat(contours[i]), true) * 0.05, true);
         
-        // exclude small and open forms
-        if (fabs(contourArea(contours[i])) < 100 || !isContourConvex(approx)) {
-            continue;
-        }
+        	// exclude small areas and opening contours
+        	if (fabs(contourArea(contours[i])) < 100 || !isContourConvex(approx)) {
+            		continue;
+        	}
         
-        cout << "Kanten: " << approx.size() << endl;
+        	cout << "Kanten: " << approx.size() << endl;
         
-        if (approx.size() == 3) {
-            Moments M = moments(contours[i]);
-            triangleCenter = cv::Point(int(M.m10/M.m00), int(M.m01/M.m00));
+        	if (approx.size() == 3) {
+			Moments M = moments(contours[i]);
+			triangleCenter = cv::Point(int(M.m10/M.m00), int(M.m01/M.m00));
 			cout << "triangleCenter: " << triangleCenter << endl;
 			triangleDetected = true;
 			break;
-        }
+        	}
 	}
-
+	
+	// triangle ist not detected, take the biggest white area 
 	if (!triangleDetected && contours.size() != 0) {
 		double biggestArea = contourArea(contours[0]);
 		triangleDetected = true;
@@ -64,7 +67,7 @@ Point ShapesDetector::getTriangleCenter(Mat image) {
 		}
 	} 
 
-    return triangleCenter;
+    	return triangleCenter;
 }
 
 void ShapesDetector::detectRectangles(Mat image){
@@ -152,7 +155,7 @@ void ShapesDetector::assignCenterPoints(double areaOne, double areaTwo, Point ar
 			cout << "areaOne > areaTwo" << getRectangleCenterMinutes() << " -- "<< getRectangleCenterHours() << endl;
 		}
 		else {
-			cout << "Fehler bei Vergleich der Flächeninhalte" << endl;
+			cout << "Fehler bei Vergleich der FlÃ¤cheninhalte" << endl;
 		}
 }
 
