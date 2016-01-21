@@ -35,97 +35,79 @@ void calcAngles() {
 	double yTriDiff = triangleCenter.y- circleCenter.y;
 	double xTriDiff = triangleCenter.x- circleCenter.x;
 
-    // Winkel des Dreiecks in Radians
+    // The triangles angle in radians
     double tRad = atan2(yTriDiff, xTriDiff);
     
-    // Winkel des Dreiecks in Grad
+    // The triangles angle in degree
     triangleDegree = (tRad * 180)/ M_PI;
     
-    cout << "tDeg: " << triangleDegree << endl;
-    
-
 	double yMinDiff = minCenter.y - circleCenter.y;
 	double xMinDiff = minCenter.x - circleCenter.x;
-    // Winkel des Minutenzeigers in Radians
+	
+    // The minute hand angle in radians
     double mRad = atan2(yMinDiff, xMinDiff);
     
-    // Winkel des Minutenzeigers in Grad
+    // The minute hand angle in degree
     minDegree = (mRad * 180) / M_PI;
     
-    cout << "mDeg: " << minDegree << endl;
-    
-    // Drehung der Uhr im Bild rausrechnen über den Winkel des Dreiecks
+    // Subtracting the Clocks rotation out of the minute hand angle
     minDegree = minDegree - triangleDegree;
     
-    cout << "mDeg: " << minDegree << endl;
-    
+    // Fetch angles out of -180 to 180 range
     if (minDegree < -180) {
         minDegree = 360 + minDegree;
     } else if (minDegree > 180) {
         minDegree = minDegree - 360;
     }
     
-    cout << "mDeg: " << minDegree << endl;
-    
 	double yHourDiff = hourCenter.y - circleCenter.y;
 	double xHourDiff = hourCenter.x - circleCenter.x;
 
-    // Winkel des Stundenzeigers in Radians
+    // The hour hand angle in radians
     double hRad = atan2(yHourDiff, xHourDiff);
     
-    // Winkel des Stundenzeigers in Grad
+    // The minute hand angle in degree
     hourDegree = (hRad * 180) / M_PI;
     
-    cout << "hDeg: " << hourDegree << endl;
-    
-    // Drehung der Uhr im Bild rausrechnen über den Winkel des Dreiecks
+    // Subtracting the Clocks rotation out of the hour hand angle
     hourDegree = hourDegree - triangleDegree;
     
-    cout << "hDeg: " << hourDegree << endl;
-    
+    // Fetch angles out of -180 to 180 range
     if (hourDegree < -180) {
         hourDegree = 360 + hourDegree;
     } else if (hourDegree > 180) {
         hourDegree = hourDegree - 360;
     }
     
-    cout << "hDeg: " << hourDegree << endl;
-    
 }
 
 void convertAnglesToTime() {
     
-    cout << "Hours: " << hourDegree/30 << endl;
-    cout << "Minutes: " << (minDegree/-6) << endl;
-    
-    // Ist der Winkel des Stundenzeigers positiv, liegt er im Bereich 0-5 h
+    // For positive hour hand angles, the hour value lies in a range of 0-5 h
     if (hourDegree > 0) {
-        // Moegliche Winkel: 1-180. Jede Stunde entspricht einem Bereich von 30 Grad.
-        // Bei einer einfachen Konvertierung einer Fliesskommazahl zu Integer wird IMMER Abgerundet. Dies machen wir uns hier zunutze.
+        // Possible angles: 1 to 180 degree. Every hour correlates to a range of 30 degree.
+	// Conversions of floating-point numbers to integer are always rounded off
         hours = hourDegree/30;
     }
-    // Ist der Winkel des Stundenzeigers hingegen negativ, liegt er im Bereich 11-6 h
+    // For negative hour hand angles, the hour value lies in a range of 11-6 h
     else {
-        // Moegliche Winkel: 0-(-180). Jede Stunde entspricht einem Bereich von 30 Grad.
-        // Über den negativen Wert wird das Vorzeichen umgekehrt. Es muessen immer 6 Stunden addiert werden, da
-        hours = 12-(hourDegree/-30);
+        // Possible angles: 0 to -180 degree.
+        hours = 12+(hourDegree/30);
     }
-    cout << "Hours: " << hours << endl;
-    
-    // Ist der Winkel des Minutenzeigers positiv, liegt er im Bereich 0-29 Min
+
+    // For positive minute hand angles, the minute value lies in a range of 0-29 min
     if (minDegree > 0) {	
-        // Moegliche Winkel: 1-180. Jede Minute entspricht einem Bereich von 6 Grad.
+        // Possible angles: 1 to 180 degree. Every minute correlates to a range of 6 degree
         minutes = minDegree/6;
     }
-    // Ist der Winkel des Minutenzeigers hingegen negativ, liegt er im Bereich 59-30 Min
+    // For negative minute hand angles, the minute value lies in a range of 59-30 min
     else {
-        // Moegliche Winkel: 0-(-180). Jede Minute entspricht einem Bereich von 6 Grad.
-        minutes = 60-(minDegree/-6);
+        // Possible angles: 0 to -180 degree.
+        minutes = 60+(minDegree/6);
 		if (minutes == 60) {
 			minutes = 0;
 		}
     }
-    cout << "Minutes: " << minutes << endl;    
 }
 
 
