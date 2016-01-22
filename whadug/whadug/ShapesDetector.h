@@ -30,8 +30,6 @@ private:
 	Point minPt;
 	Point hourPt;
 	Point centerPt;
-	Point rectangleCenterHours(0,0);
-	Point rectangleCenterMinutes(0,0);
 
 	Point rectangleCenterHours;
 	Point rectangleCenterMinutes;

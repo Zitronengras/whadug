@@ -3,6 +3,10 @@
 using namespace std;
 using namespace cv;
 
+
+Point rectangleCenterHours(0,0);
+Point rectangleCenterMinutes(0,0);
+
 ShapesDetector::ShapesDetector(void)
 {
 	everythingDetected = false;
